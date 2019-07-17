@@ -6,7 +6,7 @@
 #' @param data dataframe or tibble with a row per survey response
 #' @param column name of a character column in the data frame to be anonymised
 #' @param add_names character vector of names to anonymise (optional)
-#' @param extract logical indicating whether to look for names to anonymise in the column. Defaults to TRUE.
+#' @param auto logical indicating whether to look for names to anonymise in the column. Defaults to TRUE.
 #' @param complete logical indicating whether to anonymise every capitalised word that doesn't start a sentence. Defaults to FALSE.
 #' @param identify logical indicating whether anonymised names should be distinguishable from each other by numbers. Defaults to FALSE.
 #' @param gender logical indicating whether to remove references to gender pronouns (he/she him/her etc.). Defaults to FALSE.
@@ -15,22 +15,22 @@
 anonymise <- function(data,
                       column,
                       add_names = c(""),
-                      extract = TRUE,
+                      auto = TRUE,
                       complete = FALSE,
                       identify = FALSE,
                       gender = FALSE) {
 
   column <- dplyr::enquo(column)
 
-  if (extract == TRUE) {
+  if (auto == TRUE) {
     fullnames <- unlist(stringr::str_extract_all(dplyr::pull(data, {{ column }}),
                                  pattern = "(?<!^)(?<!\\. )[[:upper:]][[:lower:]]+ [[:upper:]][[:lower:]]+(-[[:upper:]][[:lower:]]+)?"))
 
     allnames <- unlist(stringr::str_extract_all(dplyr::pull(data, {{ column }}),
                                   pattern = "(?<!^)(?<!\\. )[[:upper:]][[:lower:]]+"))
   } else {
-    fullnames <- c("")
-    allnames <- c("")
+    fullnames <- c()
+    allnames <- c()
   }
 
   fullnames <- c(fullnames, add_names[stringr::str_detect(string = add_names, pattern = "[[:space:]]")])

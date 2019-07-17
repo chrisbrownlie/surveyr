@@ -14,7 +14,7 @@ clean_column <- function(data,
 
   column <- dplyr::enquo(column)
 
-  new_col <- dplyr::pull(data, dplyr::quo_name(column)) %>%
+  new_col <- dplyr::pull(data, {{ column }}) %>%
     stringr::str_replace_all(pattern = "[^[:alnum:][:space:]\\[\\]]", replacement = "") %>%
     stringr::str_replace_all(pattern = "[[:space:]]+", replacement = " ") %>%
     tolower()
@@ -24,7 +24,7 @@ clean_column <- function(data,
       stringr::str_replace_all(pattern = "[[:digit:]]", replacement = "")
   }
 
-  if (remove == TRUE) {
+  if (null_response == TRUE) {
     new_col <- new_col %>%
       stringr::str_replace_all(pattern = "^no$|^nothing$|^na$", replacement = "")
   }
