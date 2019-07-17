@@ -4,7 +4,7 @@
 \alias{clean_column}
 \title{Function to clean single text column, remove punctuation and standardise}
 \usage{
-clean_column(data, column, num = TRUE)
+clean_column(data, column, num = TRUE, null_response = TRUE)
 }
 \arguments{
 \item{data}{dataframe or tibble with a row per survey response}

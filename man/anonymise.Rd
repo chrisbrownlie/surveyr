@@ -5,7 +5,7 @@
 \title{Function to scan a column of free text responses and remove any
 obvious references to names}
 \usage{
-anonymise(data, column, add_names = c(""), extract = TRUE,
+anonymise(data, column, add_names = c(""), auto = TRUE,
   complete = FALSE, identify = FALSE, gender = FALSE)
 }
 \arguments{
@@ -15,7 +15,7 @@ anonymise(data, column, add_names = c(""), extract = TRUE,
 
 \item{add_names}{character vector of names to anonymise (optional)}
 
-\item{extract}{logical indicating whether to look for names to anonymise in the column. Defaults to TRUE.}
+\item{auto}{logical indicating whether to look for names to anonymise in the column. Defaults to TRUE.}
 
 \item{complete}{logical indicating whether to anonymise every capitalised word that doesn't start a sentence. Defaults to FALSE.}
 
