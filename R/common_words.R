@@ -17,20 +17,24 @@ common_words <- function(data,
                          n = 3,
                          min = 5,
                          stopwords = TRUE,
-                         remove = c("")) {
+                         remove = c(""),
+                         proportion = FALSE) {
 
   column <- dplyr::enquo(column)
-  by <- dplyr::enquo(by)
+  cols <- enquos(...)
 
   remove <- c("", remove)
 
   words <- data %>%
-    dplyr::select({{ column }}, ...) %>%
-    dplyr::mutate(word = stringr::str_split(string = {{ column }}, pattern = "[[:space:]]")) %>%
-    tidyr::unnest() %>%
-    dplyr::group_by(..., word) %>%
-    dplyr::summarise(count = n()) %>%
-    dplyr::arrange(..., -count) %>%
+    dplyr::mutate(response_id = 1:nrow(data)) %>%
+    dplyr::select({{ column }}, !!!cols, response_id) %>%
+    tidytext::unnest_tokens(input = {{ column }},
+                            output = "word",
+                            token = "words") %>%
+    dplyr::group_by(!!!cols, word) %>%
+    dplyr::summarise(count = n(),
+                     responses = n_distinct(response_id)) %>%
+    dplyr::arrange(!!!cols, -count) %>%
     dplyr::filter(!word %in% remove)
 
     if (stopwords == TRUE) {
@@ -40,9 +44,36 @@ common_words <- function(data,
     c_w <- words %>%
       dplyr::filter(count>min) %>%
       dplyr::slice(1:n) %>%
-      dplyr::arrange(..., -count) %>%
+      dplyr::arrange(!!!cols, -count) %>%
       dplyr::rename("Word" = word,
              "Count" = count)
+
+    if (proportion == TRUE) {
+      if (length(cols)==0) {
+        c_w <- c_w %>%
+          dplyr::mutate(Proportion = round(responses/nrow(data), digits = 2)) %>%
+          dplyr::select(-responses)
+      } else {
+        datagroups <- data %>%
+          tidyr::unite(group,
+                       !!!cols,
+                       remove = FALSE) %>%
+          dplyr::group_by(group) %>%
+          dplyr::summarise(count = n())
+        c_w <- c_w %>%
+          tidyr::unite(group,
+                       !!!cols,
+                       remove = FALSE) %>%
+          dplyr::rowwise() %>%
+          dplyr::mutate(total_responses = datagroups$count[which(datagroups$group == group)],
+                        Proportion = round(responses/total_responses,
+                                           digits = 2)) %>%
+          dplyr::select(-group, -total_responses, -responses)
+      }
+    } else {
+      c_w <- c_w %>%
+        dplyr::select(-responses)
+    }
 
 
     return(c_w)
