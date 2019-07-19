@@ -5,18 +5,18 @@
 \title{Function which takes in a formattable and abstracts the use of the formattable package by
 creating a simple, standardised output}
 \usage{
-prettify(object, alias = c(""), count_bar = FALSE,
+prettify(object, alias = c(""), align = c("l"), count_bar = FALSE,
   colour_groups = FALSE, flatten = FALSE)
 }
 \arguments{
+\item{object}{formattable object created by common_words function}
+
 \item{alias}{character vector indicating what the columns should be renamed, must be a named vector or
 the same length as the number of columns}
 
 \item{count_bar}{logical indicating whether a bar should be added to the count column to visualise the count}
 
 \item{colour_groups}{logical indicating whether the groups of the first column should be distinguished by colours}
-
-\item{table}{formattable object created by common_words function}
 }
 \value{
 Newly formatted formattable object

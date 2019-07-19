@@ -4,21 +4,19 @@
 \alias{common_words}
 \title{Function to tabulate a text column, showing the most commonly used words, optionally broken down by another column(s)}
 \usage{
-common_words(data, column, ..., n = 3, min = 5, output = "tb",
-  stopwords = TRUE, remove = c(""))
+common_words(data, column, ..., n = 3, min = 5, stopwords = TRUE,
+  remove = c(""))
 }
 \arguments{
 \item{data}{dataframe or tibble with a row per survey response}
 
 \item{column}{name of a character column in the data frame to be tabulated}
 
-\item{...}{column(s) to split into groups (must be less than 20 unique combinations of values between columns). Defaults to no groups}
+\item{...}{optional column(s) to split into groups (must be less than 20 unique combinations of values between columns).}
 
 \item{n}{number indicating how many most common words to return for each group. Defaults to 3}
 
 \item{min}{number indicating the minimum number of times a word needs to appear for it to be included in output, defaults to 5}
-
-\item{output}{one of either 'tb' (tibble), 'ft' (formattable) or 'pretty' (edited formattable). Defaults to 'tb'}
 
 \item{stopwords}{logical indicating whether to remove stopwords or not. Defaults to TRUE}
 
