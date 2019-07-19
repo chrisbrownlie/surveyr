@@ -44,7 +44,7 @@ anonymise <- function(data,
   if (length(fullnames)>0|complete == TRUE) {
     if (identify == TRUE) {
       fn_replacement_df <- data.frame(name = fullnames,
-                                      replacement = paste0("[person", sample(x = 1:(length(fullnames)),
+                                      replacement = paste0("[name", sample(x = 1:(length(fullnames)),
                                                                              size = length(fullnames),
                                                                              replace = FALSE), "]"),
                                       stringsAsFactors = FALSE)
