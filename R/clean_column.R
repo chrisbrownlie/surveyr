@@ -21,7 +21,7 @@ clean_column <- function(data,
 
   if (num == TRUE) {
     new_col <- new_col %>%
-      stringr::str_replace_all(pattern = "[[:digit:]]", replacement = "")
+      stringr::str_replace_all(pattern = "[[:digit:]]([^//]])", replacement = "//1")
   }
 
   if (null_response == TRUE) {
