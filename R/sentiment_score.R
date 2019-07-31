@@ -12,9 +12,13 @@
 sentiment_score <- function(data,
                             column,
                             output = "",
-                            display = 'simple') {
+                            display = "simple") {
 
   column <- dplyr::enquo(column)
+
+  if (!display %in% c("simple", "num", "rank")) {
+    stop("Error: Argument 'display' must be one of 'simple', 'num' or 'rank'. See documentation for more information.")
+  }
 
   # Custom tweaks for sentiment analysis
   add_polarity <- data.frame(x = c("ambushed", "tick box", "ticking boxes", "box ticking", "waste of time", "wasteful", "out of order", "felt like", "out of context", "missed opportunity", "accessible", "direct impact","outward looking", "collaborative"),
