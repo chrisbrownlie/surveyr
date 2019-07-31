@@ -1,13 +1,15 @@
 Package: surveyr
-Title: A Package for Quickly Analysing Free Text Survey Responses
+Title: A Package for Quickly Analysing Survey Responses
 Version: 0.0.0.1
 Authors@R: 
     person(given = "Chris",
            family = "Brownlie",
            role = c("aut", "cre"),
            email = "christopher.brownlie@education.gov.uk")
-Description: A series of functions that speed up and simplify basic analysis of free text survey responses. Functions for cleaning and anonymising data as well as generating tables and plots, which are all able to be used in conjunction with tidyverse.
-License: What license it uses
+Description: A series of functions that speed up and simplify basic analysis of free text survey responses. 
+             Functions for cleaning and anonymising data as well as generating tables and plots of common words, 
+             all of which are able to be used in conjunction with tidyverse.
+License: file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: stringr, dplyr, tm, formattable, tidytext

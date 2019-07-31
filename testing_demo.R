@@ -3,6 +3,9 @@
 # Load dplyr to assist
 library(dplyr)
 
+# Load surveyr package
+devtools::load_all()
+
 # Import raw data
 data <- readxl::read_xlsx("../demo_data.xlsx")
 
@@ -19,7 +22,8 @@ new_data <- data %>%
          "q22_changes" = 6,
          "q24_reflections" = 7)
 
-# Focussing on q24_reflections, take a look at some of the data for comparisons later
+# Focussing on Q24: Do you have any other reflections about your meetings with your RSC office?
+# Take a look at some of the data for comparisons later
 sample <- 27:37
 new_data[sample,"q24_reflections"]
 
@@ -48,7 +52,7 @@ anon_data <- new_data %>%
 anon_data[sample,"q24_reflections"]
 
 # If we want to anonymise certain names (i.e. we have a list of certain names)
-names_to_anonymise <- c("Joe Bloggs", "the NSC")
+names_to_anonymise <- c("Joe Bloggs", "the RSC")
 anon_data <- new_data %>%
   anonymise(q24_reflections,
             auto = FALSE, # So that the function doesn't automatically overwrite every name it finds
@@ -58,6 +62,11 @@ anon_data <- new_data %>%
 
 anon_data[sample,"q24_reflections"]
 
+# Default behaviour for rest of the demo
+anon_data <- new_data %>%
+  anonymise(q24_reflections)
+
+anon_data[sample,"q24_reflections"]
 
 # clean_column() -----------------------------------------------------------------------------------------
 # After anonymising, column needs to be standardised (lower case, punctuation etc.) before it can be analysed
@@ -94,36 +103,47 @@ clean_data %>%
 # Breakdown by demographic
 clean_data %>%
   common_words(q24_reflections,
-               q1_position_in_trust,
+               q2_rsc_office_met,
                remove = c("meeting", "rsc", "trust"),
                n = 1)
 
 # To include all groups
 clean_data %>%
   common_words(q24_reflections,
-               q1_position_in_trust,
-               min = 0)
+               q2_rsc_office_met,
+               remove = c("meeting", "rsc", "trust"),
+               n = 5) # Top 5 words but some are being excluded because they occur less than 5 times
+
+clean_data %>%
+  common_words(q24_reflections,
+               q2_rsc_office_met,
+               remove = c("meeting", "rsc", "trust"),
+               n = 5,
+               min = 0) # include top five words regardless of how often they occur
 
 # Stopwords are currently being removed, to keep them in
 clean_data %>%
   common_words(q24_reflections,
-               q1_position_in_trust,
+               q2_rsc_office_met,
                stopwords = FALSE)
 
 # Can also calculate the proportion of responses in each group
 # that mentioned the word
 clean_data %>%
   common_words(q24_reflections,
-               q1_position_in_trust,
+               q2_rsc_office_met,
+               remove = c("meeting", "rsc", "trust"),
+               n = 1,
                proportion = TRUE)
 
 # Finally, if exporting to external document, can make it more visually appealing with prettify()
 clean_data %>%
   common_words(q24_reflections,
-               q1_position_in_trust,
+               q2_rsc_office_met,
                proportion = TRUE,
-               remove = c("meeting", "rsc", "trust")) %>%
-  prettify(alias = c("Respondent's position in Trust" = "q1_position_in_trust"),
+               remove = c("meeting", "rsc", "trust"),
+               n = 2) %>%
+  prettify(alias = c("Which RSC did the respondent meet?" = "q2_rsc_office_met"),
            count_bar = TRUE,
            colour_groups = TRUE)
 
@@ -151,4 +171,17 @@ clean_data %>%
           word = "meeting", # filter to only include n-grams containing the word 'better'
           stop_thresh = 0.4) %>% # allow only one stopword per ngram
   prettify(alias = c("Phrase" = "ngram"),
+           count_bar = TRUE)
+
+# Example workflow ---------------------------------------------------------------------------------------------
+# (After running setup)
+new_data %>%
+  anonymise(q24_reflections,
+            identify = TRUE) %>%
+  clean_column(q24_reflections) %>%
+  common_words(q24_reflections,
+               q2_rsc_office_met,
+               remove = c("meeting", "rsc", "trust"),
+               n = 1) %>%
+  prettify(alias = c("Which RSC did the respondent meet?" = "q2_rsc_office_met"),
            count_bar = TRUE)
