@@ -4,7 +4,7 @@
 \alias{n_grams}
 \title{Function to tabulate a text column, showing the most commonly used words, optionally broken down by another column(s)}
 \usage{
-n_grams(data, column, word = "", n = 2, min = 2)
+n_grams(data, column, word = "", n = 2, min = 2, stop_thresh = 0.7)
 }
 \arguments{
 \item{data}{dataframe or tibble with a row per survey response}
@@ -13,9 +13,12 @@ n_grams(data, column, word = "", n = 2, min = 2)
 
 \item{word}{optional string indicating how to filter the resulting dataframe (only return ngrams containing 'word')}
 
-\item{n}{number indicating how many most common words to return for each group. Defaults to 3}
+\item{n}{number indicating what kind of n-grams to return (bigram, trigram...)}
 
 \item{min}{number indicating the minimum number of times a word needs to appear for it to be included in output, defaults to 5}
+
+\item{stop_thresh}{numeric indicating the threshold to remove stopwords (i.e. maximum proportion of stopwords to words
+allowed). 1 includes all n-grams regardless of stop words, 0 excludes all n-grams containing at least one stopword.}
 }
 \value{
 Original dataframe with text column cleaned and standardised ready for analysing

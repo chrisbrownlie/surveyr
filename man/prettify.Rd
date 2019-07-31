@@ -6,10 +6,10 @@
 creating a simple, standardised output}
 \usage{
 prettify(object, alias = c(""), align = c("l"), count_bar = FALSE,
-  colour_groups = FALSE, flatten = FALSE)
+  colour_groups = FALSE)
 }
 \arguments{
-\item{object}{formattable object created by common_words function}
+\item{object}{dataframe}
 
 \item{alias}{character vector indicating what the columns should be renamed, must be a named vector or
 the same length as the number of columns}

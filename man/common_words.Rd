@@ -5,7 +5,7 @@
 \title{Function to tabulate a text column, showing the most commonly used words, optionally broken down by another column(s)}
 \usage{
 common_words(data, column, ..., n = 3, min = 5, stopwords = TRUE,
-  remove = c(""))
+  remove = c(""), proportion = FALSE)
 }
 \arguments{
 \item{data}{dataframe or tibble with a row per survey response}
