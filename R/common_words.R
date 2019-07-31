@@ -4,13 +4,14 @@
 #'
 #' @param data dataframe or tibble with a row per survey response
 #' @param column name of a character column in the data frame to be tabulated
-#' @param ... optional column(s) to split into groups (must be less than 20 unique combinations of values between columns).
+#' @param ... optional column(s) to split into groups
 #' @param n number indicating how many most common words to return for each group. Defaults to 3
 #' @param min number indicating the minimum number of times a word needs to appear for it to be included in output, defaults to 5
 #' @param stopwords logical indicating whether to remove stopwords or not. Defaults to TRUE
 #' @param remove character vector of additional words to remove
+#' @param proportion logical indicating whether to include the proportion of responses that contained the word
 #'
-#' @return Original dataframe with text column cleaned and standardised ready for analysing
+#' @return Table of most common words with the number of times they appear in each group
 common_words <- function(data,
                          column,
                          ...,

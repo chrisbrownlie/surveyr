@@ -1,4 +1,4 @@
-#' Function to tabulate a text column, showing the most commonly used words, optionally broken down by another column(s)
+#' Function to tabulate the most commonly appearing n-grams in a text column
 #'
 #' @importFrom dplyr %>%
 #'
@@ -8,9 +8,9 @@
 #' @param n number indicating what kind of n-grams to return (bigram, trigram...)
 #' @param min number indicating the minimum number of times a word needs to appear for it to be included in output, defaults to 5
 #' @param stop_thresh numeric indicating the threshold to remove stopwords (i.e. maximum proportion of stopwords to words
-#' allowed). 1 includes all n-grams regardless of stop words, 0 excludes all n-grams containing at least one stopword.
+#' allowed). 1 includes all n-grams regardless of stop words, 0 excludes all n-grams containing one or more stopwords.
 #'
-#' @return Original dataframe with text column cleaned and standardised ready for analysing
+#' @return Table of n-grams with the number of times they appear
 n_grams <- function(data,
                    column,
                    word = "",

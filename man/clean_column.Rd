@@ -4,7 +4,7 @@
 \alias{clean_column}
 \title{Function to clean single text column, remove punctuation and standardise}
 \usage{
-clean_column(data, column, num = TRUE, null_response = TRUE)
+clean_column(data, column, num = FALSE, null_response = TRUE)
 }
 \arguments{
 \item{data}{dataframe or tibble with a row per survey response}
@@ -12,6 +12,8 @@ clean_column(data, column, num = TRUE, null_response = TRUE)
 \item{column}{name of a character column in the data frame to be cleaned}
 
 \item{num}{logical indicating whether numbers should be removed as part of cleaning process}
+
+\item{null_response}{logical indicating whether to remove non-answers (e.g. 'no', 'none', 'na' etc.)}
 }
 \value{
 Original dataframe with text column cleaned and standardised ready for analysing

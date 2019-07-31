@@ -173,6 +173,9 @@ clean_data %>%
   prettify(alias = c("Phrase" = "ngram"),
            count_bar = TRUE)
 
+# sentiment_score() -----------------------------------------
+sentiment_data <- clean_data %>%
+  sentiment_score(q24_reflections)
 # Example workflow ---------------------------------------------------------------------------------------------
 # (After running setup)
 new_data %>%

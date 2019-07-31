@@ -1,5 +1,5 @@
-#' Function which takes in a formattable and abstracts the use of the formattable package by
-#' creating a simple, standardised output
+#' Function which takes in a formattable and abstracts the use of advanced elements
+#' of the formattable package by creating a simple, standardised formatted output
 #'
 #' @importFrom dplyr %>%
 #'
