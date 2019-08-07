@@ -17,13 +17,15 @@ determine_themes <- function(dataframe,
                              column,
                              num_topics = 2) {
 
-  column <- dplyr::enquo(column)
+  if (class(column)[1] != "quosure") {
+    column <- dplyr::enquo(column)
+  }
 
   load_internal_data()
 
   model_matrix <- dataframe %>%
-    dplyr::transmute(id = 1:nrow(.),
-                     {{ column }}) %>%
+    dplyr::mutate(id = 1:nrow(.)) %>%
+    dplyr::select(id, dplyr::quo_name(column)) %>%
     tidytext::unnest_tokens(output = "word",
                             input = {{ column }},
                             token = "words") %>%
@@ -63,32 +65,34 @@ summarise_themes <- function(dataframe,
                              column,
                              num_words = 3) {
 
-  column <- dplyr::enquo(column)
-
   load_internal_data()
 
-  if (!paste0("model_", dplyr::quo_name(column)) %in% internalnames) {
+  if (!paste0("model_", dplyr::quo_name(column <- dplyr::enquo(column))) %in% internalnames) {
     message(paste0("Warning: There is currently no model for column ", dplyr::quo_name(column), ", function determine_themes will be run first with default arguments."))
-    determine_themes(dataframe, column)
+    determine_themes(dataframe = dataframe,
+                     column = dplyr::enquo(column))
     load_internal_data()
   }
 
+  column <- dplyr::enquo(column)
+
   model_matrix <- get(paste0("model_", dplyr::quo_name(column)))
 
-  theme_words_initial < model_matrix %>%
+  theme_words_initial <- model_matrix %>%
     dplyr::mutate(topic = topicnames[topic]) %>%
-    group_by(topic) %>%
-    dplyr::top_n(n = 5*num_words)
-  exclude_words <- themes %>%
+    dplyr::group_by(topic) %>%
+    dplyr::top_n(n = 5*num_words, wt = beta)
+  exclude_words <- theme_words_initial %>%
     dplyr::group_by(term) %>%
     dplyr::summarise(count = n()) %>%
     dplyr::filter(count > 1) %>%
     dplyr::pull(term)
-  final_theme_words <- themes %>%
+  final_theme_words <- theme_words_initial %>%
     dplyr::filter(!term %in% exclude_words) %>%
-    dplyr::top_n(n = num_words) %>%
+    dplyr::top_n(n = num_words, wt = beta) %>%
     dplyr::mutate(rank = dplyr::dense_rank(beta)) %>%
-    dplyr::select(topic, term, rank)
+    dplyr::select(topic, term, rank) %>%
+    dplyr::arrange(topic, rank)
 
   return(final_theme_words)
 }
