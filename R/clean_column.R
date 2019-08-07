@@ -8,6 +8,8 @@
 #' @param null_response logical indicating whether to remove non-answers (e.g. 'no', 'none', 'na' etc.)
 #'
 #' @return Original dataframe with text column cleaned and standardised ready for analysing
+#'
+#' @export
 clean_column <- function(data,
                          column,
                          num = FALSE,

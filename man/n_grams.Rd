@@ -2,7 +2,7 @@
 % Please edit documentation in R/n_grams.R
 \name{n_grams}
 \alias{n_grams}
-\title{Function to tabulate a text column, showing the most commonly used words, optionally broken down by another column(s)}
+\title{Function to tabulate the most commonly appearing n-grams in a text column}
 \usage{
 n_grams(data, column, word = "", n = 2, min = 2, stop_thresh = 0.7)
 }
@@ -18,11 +18,11 @@ n_grams(data, column, word = "", n = 2, min = 2, stop_thresh = 0.7)
 \item{min}{number indicating the minimum number of times a word needs to appear for it to be included in output, defaults to 5}
 
 \item{stop_thresh}{numeric indicating the threshold to remove stopwords (i.e. maximum proportion of stopwords to words
-allowed). 1 includes all n-grams regardless of stop words, 0 excludes all n-grams containing at least one stopword.}
+allowed). 1 includes all n-grams regardless of stop words, 0 excludes all n-grams containing one or more stopwords.}
 }
 \value{
-Original dataframe with text column cleaned and standardised ready for analysing
+Table of n-grams with the number of times they appear
 }
 \description{
-Function to tabulate a text column, showing the most commonly used words, optionally broken down by another column(s)
+Function to tabulate the most commonly appearing n-grams in a text column
 }

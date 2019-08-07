@@ -2,8 +2,8 @@
 % Please edit documentation in R/prettify.R
 \name{prettify}
 \alias{prettify}
-\title{Function which takes in a formattable and abstracts the use of the formattable package by
-creating a simple, standardised output}
+\title{Function which takes in a dataframe and abstracts the use of
+the formattable package by creating a colourful standardised table, output as an image}
 \usage{
 prettify(object, alias = c(""), align = c("l"), count_bar = FALSE,
   colour_groups = FALSE)
@@ -22,6 +22,6 @@ the same length as the number of columns}
 Newly formatted formattable object
 }
 \description{
-Function which takes in a formattable and abstracts the use of the formattable package by
-creating a simple, standardised output
+Function which takes in a dataframe and abstracts the use of
+the formattable package by creating a colourful standardised table, output as an image
 }

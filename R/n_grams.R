@@ -11,6 +11,8 @@
 #' allowed). 1 includes all n-grams regardless of stop words, 0 excludes all n-grams containing one or more stopwords.
 #'
 #' @return Table of n-grams with the number of times they appear
+#'
+#' @export
 n_grams <- function(data,
                    column,
                    word = "",

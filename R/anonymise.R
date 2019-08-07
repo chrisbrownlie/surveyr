@@ -12,6 +12,8 @@
 #' @param gender logical indicating whether to remove references to gender pronouns (he/she him/her etc.). Defaults to FALSE.
 #'
 #' @return Original dataframe with column anonymised
+#'
+#' @export
 anonymise <- function(data,
                       column,
                       add_names = c(""),

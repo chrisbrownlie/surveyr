@@ -12,6 +12,8 @@
 #' @param proportion logical indicating whether to include the proportion of responses that contained the word
 #'
 #' @return Table of most common words with the number of times they appear in each group
+#'
+#' @export
 common_words <- function(data,
                          column,
                          ...,

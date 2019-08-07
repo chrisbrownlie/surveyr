@@ -1,5 +1,5 @@
-#' Function which takes in a formattable and abstracts the use of advanced elements
-#' of the formattable package by creating a simple, standardised formatted output
+#' Function which takes in a dataframe and abstracts the use of
+#' the formattable package by creating a colourful standardised table, output as an image
 #'
 #' @importFrom dplyr %>%
 #'
@@ -10,6 +10,8 @@
 #' @param colour_groups logical indicating whether the groups of the first column should be distinguished by colours
 #'
 #' @return Newly formatted formattable object
+#'
+#' @export
 prettify <- function(object,
                      alias = c(""),
                      align = c("l"),
@@ -26,11 +28,11 @@ prettify <- function(object,
     names(new_object) <- new_names
   }
 
-  colours <- c(RColorBrewer::brewer.pal(9, "Pastel1"),
+  colours <- rep(c(RColorBrewer::brewer.pal(9, "Pastel1"),
                RColorBrewer::brewer.pal(8, "Pastel2"),
                RColorBrewer::brewer.pal(9, "Set1"),
                RColorBrewer::brewer.pal(8, "Set2"),
-               RColorBrewer::brewer.pal(12, "Set3"))
+               RColorBrewer::brewer.pal(12, "Set3")), 10)
 
   groups <- new_object %>%
     dplyr::ungroup() %>%

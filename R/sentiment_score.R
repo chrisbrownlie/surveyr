@@ -9,6 +9,8 @@
 #' the sentiment of every response should be ranked with a higher rank denoting more positive sentiment i.e. 1 being the most positive ('rank')
 #'
 #' @return Original dataframe with an additional column denoting the sentiment of the response
+#'
+#' @export
 sentiment_score <- function(data,
                             column,
                             output = "",

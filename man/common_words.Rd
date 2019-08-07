@@ -12,7 +12,7 @@ common_words(data, column, ..., n = 3, min = 5, stopwords = TRUE,
 
 \item{column}{name of a character column in the data frame to be tabulated}
 
-\item{...}{optional column(s) to split into groups (must be less than 20 unique combinations of values between columns).}
+\item{...}{optional column(s) to split into groups}
 
 \item{n}{number indicating how many most common words to return for each group. Defaults to 3}
 
@@ -21,9 +21,11 @@ common_words(data, column, ..., n = 3, min = 5, stopwords = TRUE,
 \item{stopwords}{logical indicating whether to remove stopwords or not. Defaults to TRUE}
 
 \item{remove}{character vector of additional words to remove}
+
+\item{proportion}{logical indicating whether to include the proportion of responses that contained the word}
 }
 \value{
-Original dataframe with text column cleaned and standardised ready for analysing
+Table of most common words with the number of times they appear in each group
 }
 \description{
 Function to tabulate a text column, showing the most commonly used words, optionally broken down by another column(s)
