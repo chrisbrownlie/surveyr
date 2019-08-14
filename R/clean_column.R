@@ -29,7 +29,7 @@ clean_column <- function(data,
 
   if (null_response == TRUE) {
     new_col <- new_col %>%
-      stringr::str_replace_all(pattern = "^(no|nothing|none|na|not really|no thanks|no thank you)(\\.)?[[:space:]]*$", replacement = "")
+      stringr::str_replace_all(pattern = "^(no|nothing|none|na|not really|no thanks|no thank you|n/a)(\\.)?[[:space:]]*$", replacement = "")
   }
 
   data[[dplyr::quo_name(column)]] <- new_col
