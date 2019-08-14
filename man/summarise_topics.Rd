@@ -4,7 +4,7 @@
 \alias{summarise_topics}
 \title{summarise_topics}
 \usage{
-summarise_topics(dataframe, column, num_words = 3)
+summarise_topics(dataframe, column, num_words = 3, exclude = "")
 }
 \arguments{
 \item{dataframe}{dataframe or tibble of survey responses}
