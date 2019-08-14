@@ -22,7 +22,7 @@ prettify <- function(object,
 
   if (alias != c("")) {
     new_names <- names(object)
-    for (i in 1:length(alias)) {
+    for (i in seq_along(alias)) {
       new_names[new_names == alias[i]] <- names(alias[i])
     }
     names(new_object) <- new_names
@@ -39,7 +39,7 @@ prettify <- function(object,
     dplyr::group_by("id" = .[[1]]) %>%
     dplyr::summarise(rows = n())
   groups <- groups %>%
-    dplyr::mutate(colour = colours[1:nrow(groups)],
+    dplyr::mutate(colour = colours[seq_along(dplyr::pull(groups, 1))],
                   cumul = cumsum(rows))
 
   groups <- data.frame("id" = "NA", "colour" = "NA", rows = 1, cumul = 0,
@@ -48,22 +48,22 @@ prettify <- function(object,
 
   if (count_bar == TRUE & colour_groups == TRUE) {
     colour_reps <- c()
-    for (i in 2:nrow(groups)) {
+    for (i in seq_along(dplyr::pull(groups, 1))[-1]) {
       colour_reps <- c(colour_reps, rep(groups$colour[i], groups$rows[i]))
     }
 
     formatlist <- c(list(Count = formattable::color_bar(color = "lightblue", fun = function(x) {as.numeric(x)/max(as.numeric(x))})),
-                       lapply(2:nrow(groups), function(rownum) {
+                       lapply(seq_along(dplyr::pull(groups, 1))[-1], function(rownum) {
                          formattable::area(col = 1, row = (groups$cumul[[rownum-1]]+1):groups$cumul[[rownum]]) ~ formattable::color_tile(groups$colour[[rownum]],
                                                                                                                            groups$colour[[rownum]])}))
   } else if (count_bar == TRUE & colour_groups == FALSE) {
     formatlist <- list(Count = formattable::color_bar(color = "lightblue", fun = function(x) {as.numeric(x)/max(as.numeric(x))}))
   } else if (count_bar == FALSE & colour_groups == TRUE) {
     colour_reps <- c()
-    for (i in 2:nrow(groups)) {
+    for (i in seq_along(dplyr::pull(groups, 1))[-1]) {
       colour_reps <- c(colour_reps, rep(groups$colour[i], groups$rows[i]))
     }
-    formatlist <- lapply(2:nrow(groups), function(rownum) {
+    formatlist <- lapply(seq_along(dplyr::pull(groups, 1))[-1], function(rownum) {
                       formattable::area(col = 1, row = (groups$cumul[[rownum-1]]+1):groups$cumul[[rownum]]) ~ formattable::color_tile(groups$colour[[rownum]],
                                                                                                                                       groups$colour[[rownum]])})
   } else {

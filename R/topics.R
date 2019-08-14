@@ -20,7 +20,7 @@ determine_topics <- function(dataframe,
   }
 
   model_matrix <- dataframe %>%
-    dplyr::mutate(id = 1:nrow(.)) %>%
+    dplyr::mutate(id = seq_along(dplyr::pull(., 1))) %>%
     dplyr::select(id, dplyr::quo_name(column)) %>%
     tidytext::unnest_tokens(output = "word",
                             input = {{ column }},
@@ -125,7 +125,7 @@ classify_topics <- function(dataframe,
   }
 
   return_df <- dataframe %>%
-    dplyr::mutate(document = as.character(1:nrow(.))) %>%
+    dplyr::mutate(document = as.character(seq_along(dplyr::pull(., 1)))) %>%
     dplyr::left_join(gamma_matrix, by = c("document")) %>%
     dplyr::mutate(confidence = ifelse(!is.na(confidence),
                                 paste0(round(confidence*100, digits = 1), "%"),
