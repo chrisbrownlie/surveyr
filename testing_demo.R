@@ -177,8 +177,19 @@ clean_data %>%
 sentiment_data <- clean_data %>%
   sentiment_score(q24_reflections)
 # themes ----------------------------------------------------------------------
-clean_data %>%
-  summarise_themes(q12_main_challenges)
+new_data %>%
+  summarise_topics(q12_main_challenges,
+                   exclude = "rsc",
+                   num_topics = 2)
+
+topics_data <- new_data %>%
+  clean_column(q12_main_challenges) %>%
+  classify_topics(q12_main_challenges,
+                  topic_aliases = c("1" = "finances",
+                                    "2" = "growth"),
+                  output = "main_challenges_topic",
+                  confidence = TRUE)
+
 # Example workflow ---------------------------------------------------------------------------------------------
 # (After running setup)
 new_data %>%
