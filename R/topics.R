@@ -55,10 +55,12 @@ determine_topics <- function(dataframe,
 summarise_topics <- function(dataframe,
                              column,
                              num_words = 3,
-                             exclude = "") {
+                             exclude = "",
+                             num_topics = 2) {
 
   beta_matrix <- determine_topics(dataframe = dataframe,
-                                   column = dplyr::enquo(column)) %>%
+                                  column = dplyr::enquo(column),
+                                  num_topics = num_topics) %>%
     tidytext::tidy(matrix = "beta")
 
   topic_words_initial <- beta_matrix %>%
@@ -101,14 +103,18 @@ summarise_topics <- function(dataframe,
 #'
 #' @return the original dataframe with an additional column (name specified by output) containing which
 #' topic each response in 'column' falls in to, optionally aliased
+#'
+#' @export
 classify_topics <- function(dataframe,
                             column,
                             output = '',
                             topic_aliases = '',
+                            num_topics = 2,
                             confidence = FALSE) {
 
   gamma_matrix <- determine_topics(dataframe = dataframe,
-                                   column = dplyr::enquo(column)) %>%
+                                   column = dplyr::enquo(column),
+                                   num_topics = num_topics) %>%
     tidytext::tidy(matrix = "gamma") %>%
     dplyr::group_by(document) %>%
     dplyr::summarise(topic = topic[which.max(gamma)],
@@ -129,7 +135,7 @@ classify_topics <- function(dataframe,
 
   if (topic_aliases[1] != "") {
     if (length(topic_aliases)!=length(unique(return_df$topic[return_df$topic!="none"]))) {
-      stop(paste0("Error: The argument 'topic_aliases' contains ",  length(topic_aliases), " elements, it must have the same number of elements as there are topics (", length(unique(return_df$topic[return_df$topic!="none"])), ")."))
+      stop(paste0("Error: The argument 'topic_aliases' contains ",  length(topic_aliases), " elements, it must have the same number of elements as there are topics specified by 'num_topics' (", length(unique(return_df$topic[return_df$topic!="none"])), ")."))
     } else {
       if (sum(names(topic_aliases) %in% return_df$topic)!=length(topic_aliases)) {
         stop(paste0("Error: topic_aliases must be a named character vector, which the name of each element corresponding to the number of the topic."))
