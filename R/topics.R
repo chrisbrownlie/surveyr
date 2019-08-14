@@ -11,8 +11,6 @@
 #' @param num_topics integer denoting the number of topics (k) to be specified for the LDA model, defaults to 2
 #'
 #' @return a dataframe, where each column is a topic and contains the 5 most common words in those topics
-#'
-#' @export
 determine_topics <- function(dataframe,
                              column,
                              num_topics = 2) {
@@ -20,8 +18,6 @@ determine_topics <- function(dataframe,
   if (class(column)[1] != "quosure") {
     column <- dplyr::enquo(column)
   }
-
-  load_internal_data()
 
   model_matrix <- dataframe %>%
     dplyr::mutate(id = 1:nrow(.)) %>%
@@ -31,17 +27,12 @@ determine_topics <- function(dataframe,
                             token = "words") %>%
     dplyr::group_by(id, word) %>%
     dplyr::summarise(count = n()) %>%
-    dplyr::filter(!word %in% tm::stopwords("en")) %>%
     tidytext::cast_dtm(document = "id",
                        term = "word",
                        value = "count") %>%
-    topicmodels::LDA(k = num_topics, control = list(seed = 1066)) %>%
-    tidytext::tidy(matrix = "beta")
+    topicmodels::LDA(k = num_topics, control = list(seed = 1066))
 
-  assign(paste0("model_", dplyr::quo_name(column)), value = model_matrix)
-  save(list = c(paste0("model_", dplyr::quo_name(column)), internalnames),
-       file = "R/sysdata.rda")
-
+  return(model_matrix)
 }
 
 
@@ -63,23 +54,16 @@ determine_topics <- function(dataframe,
 #' @export
 summarise_topics <- function(dataframe,
                              column,
-                             num_words = 3) {
+                             num_words = 3,
+                             exclude = "") {
 
-  load_internal_data()
+  beta_matrix <- determine_topics(dataframe = dataframe,
+                                   column = dplyr::enquo(column)) %>%
+    tidytext::tidy(matrix = "beta")
 
-  if (!paste0("model_", dplyr::quo_name(column <- dplyr::enquo(column))) %in% internalnames) {
-    message(paste0("Warning: There is currently no model for column ", dplyr::quo_name(column), ", function determine_topics will be run first with default arguments."))
-    determine_topics(dataframe = dataframe,
-                     column = dplyr::enquo(column))
-    load_internal_data()
-  }
-
-  column <- dplyr::enquo(column)
-
-  model_matrix <- get(paste0("model_", dplyr::quo_name(column)))
-
-  topic_words_initial <- model_matrix %>%
-    dplyr::mutate(topic = topicnames[topic]) %>%
+  topic_words_initial <- beta_matrix %>%
+    dplyr::mutate(topic = surveyr:::topicnames[topic]) %>%
+    dplyr::filter(!term %in% tm::stopwords("en")) %>%
     dplyr::group_by(topic) %>%
     dplyr::top_n(n = 5*num_words, wt = beta)
   exclude_words <- topic_words_initial %>%
@@ -87,6 +71,7 @@ summarise_topics <- function(dataframe,
     dplyr::summarise(count = n()) %>%
     dplyr::filter(count > 1) %>%
     dplyr::pull(term)
+  exclude_words <- c(exclude_words, tolower(exclude))
   final_topic_words <- topic_words_initial %>%
     dplyr::filter(!term %in% exclude_words) %>%
     dplyr::top_n(n = num_words, wt = beta) %>%
@@ -100,9 +85,8 @@ summarise_topics <- function(dataframe,
 
 #' classify_topics()
 #'
-#' Function which takes in a dataframe and column which has been
-#' modelled via determine_topics() and produces another column,
-#' saying which topic each response is most relevant to
+#' Function which takes in a dataframe and column and produces another column,
+#' denoting which topic each response is most relevant to
 #'
 #' @importFrom dplyr %>%
 #'
@@ -112,5 +96,56 @@ summarise_topics <- function(dataframe,
 #' @param output name of the new column to be produced, defaults to '{column}_topic'
 #' @param topic_aliases named string vector, denoting for each topic (1,2.. etc.) what it is to
 #' be renamed. Leave blank to stay as 'topic1', 'topic2' etc.
+#' @param confidence logical indicating whether to include topic confidence in output (how likely
+#' that the classified topic is definitive)
 #'
-#' @return the original dataframe
+#' @return the original dataframe with an additional column (name specified by output) containing which
+#' topic each response in 'column' falls in to, optionally aliased
+classify_topics <- function(dataframe,
+                            column,
+                            output = '',
+                            topic_aliases = '',
+                            confidence = FALSE) {
+
+  gamma_matrix <- determine_topics(dataframe = dataframe,
+                                   column = dplyr::enquo(column)) %>%
+    tidytext::tidy(matrix = "gamma") %>%
+    dplyr::group_by(document) %>%
+    dplyr::summarise(topic = topic[which.max(gamma)],
+                    confidence = max(gamma)/(max(gamma)+dplyr::nth(gamma, n=2, order_by = desc(gamma))))
+
+  if (output == '') {
+    output <- paste0(dplyr::quo_name(dplyr::enquo(column)), "_topic")
+  }
+
+  return_df <- dataframe %>%
+    dplyr::mutate(document = as.character(1:nrow(.))) %>%
+    dplyr::left_join(gamma_matrix, by = c("document")) %>%
+    dplyr::mutate(confidence = ifelse(!is.na(confidence),
+                                paste0(round(confidence*100, digits = 1), "%"),
+                                confidence)) %>%
+    tidyr::replace_na(list(topic = "none", confidence = "n/a")) %>%
+    select(-document)
+
+  if (topic_aliases[1] != "") {
+    if (length(topic_aliases)!=length(unique(return_df$topic[return_df$topic!="none"]))) {
+      stop(paste0("Error: The argument 'topic_aliases' contains ",  length(topic_aliases), " elements, it must have the same number of elements as there are topics (", length(unique(return_df$topic[return_df$topic!="none"])), ")."))
+    } else {
+      if (sum(names(topic_aliases) %in% return_df$topic)!=length(topic_aliases)) {
+        stop(paste0("Error: topic_aliases must be a named character vector, which the name of each element corresponding to the number of the topic."))
+      } else {
+        new_topics <- sapply(return_df$topic, function(x) {if(x %in% names(topic_aliases)) {x <- topic_aliases[names(topic_aliases)==x]} else {x <- "none"}})
+        return_df$topic <- new_topics
+      }
+    }
+  }
+
+  names(return_df)[names(return_df)=="topic"] <- output
+
+  if (confidence == FALSE) {
+    return_df <- return_df %>%
+      select(-confidence)
+  }
+
+  return(return_df)
+}

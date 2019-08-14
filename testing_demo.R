@@ -4,7 +4,7 @@
 library(dplyr)
 
 # Load surveyr package
-devtools::load_all()
+devtools::load_all(export_all = FALSE)
 
 # Import raw data
 data <- readxl::read_xlsx("../demo_data.xlsx")
@@ -176,6 +176,9 @@ clean_data %>%
 # sentiment_score() -----------------------------------------
 sentiment_data <- clean_data %>%
   sentiment_score(q24_reflections)
+# themes ----------------------------------------------------------------------
+clean_data %>%
+  summarise_themes(q12_main_challenges)
 # Example workflow ---------------------------------------------------------------------------------------------
 # (After running setup)
 new_data %>%
