@@ -4,7 +4,6 @@
 #' the topicmodels package by applying an LDA model and saving data internally
 #' to be used later by other *_topics functions
 #'
-#' @importFrom dplyr %>%
 #'
 #' @param dataframe dataframe or tibble of survey responses
 #' @param column string variable of free text responses to which the LDA model will be applied
@@ -16,17 +15,17 @@ determine_topics <- function(dataframe,
                              num_topics = 2) {
 
   if (class(column)[1] != "quosure") {
-    column <- dplyr::enquo(column)
+    column <- enquo(column)
   }
 
   model_matrix <- dataframe %>%
-    dplyr::mutate(id = seq_along(dplyr::pull(., 1))) %>%
-    dplyr::select(id, dplyr::quo_name(column)) %>%
+    mutate(id = seq_along(pull(., 1))) %>%
+    select(id, quo_name(column)) %>%
     tidytext::unnest_tokens(output = "word",
                             input = {{ column }},
                             token = "words") %>%
-    dplyr::group_by(id, word) %>%
-    dplyr::summarise(count = n()) %>%
+    group_by(id, word) %>%
+    summarise(count = n()) %>%
     tidytext::cast_dtm(document = "id",
                        term = "word",
                        value = "count") %>%
@@ -42,8 +41,6 @@ determine_topics <- function(dataframe,
 #'
 #' Function to return to top unique words for each topic, running
 #' determine_topics if there is no model for that column yet
-#'
-#' @importFrom dplyr %>%
 #'
 #' @param dataframe dataframe or tibble of survey responses
 #' @param column string variable of free text responses which has a specified LDA model
@@ -61,26 +58,26 @@ summarise_topics <- function(dataframe,
                              num_topics = 2) {
 
   beta_matrix <- determine_topics(dataframe = dataframe,
-                                  column = dplyr::enquo(column),
+                                  column = enquo(column),
                                   num_topics = num_topics) %>%
     tidytext::tidy(matrix = "beta")
 
   topic_words_initial <- beta_matrix %>%
-    dplyr::filter(!term %in% tm::stopwords("en")) %>%
-    dplyr::group_by(topic) %>%
-    dplyr::top_n(n = 5*num_words, wt = beta)
+    filter(!term %in% tm::stopwords("en")) %>%
+    group_by(topic) %>%
+    top_n(n = 5*num_words, wt = beta)
   exclude_words <- topic_words_initial %>%
-    dplyr::group_by(term) %>%
-    dplyr::summarise(count = n()) %>%
-    dplyr::filter(count > 1) %>%
-    dplyr::pull(term)
+    group_by(term) %>%
+    summarise(count = n()) %>%
+    filter(count > 1) %>%
+    pull(term)
   exclude_words <- c(exclude_words, tolower(exclude))
   final_topic_words <- topic_words_initial %>%
-    dplyr::filter(!term %in% exclude_words) %>%
-    dplyr::top_n(n = num_words, wt = beta) %>%
-    dplyr::mutate(rank = dplyr::dense_rank(beta)) %>%
-    dplyr::select(topic, term, rank) %>%
-    dplyr::arrange(topic, rank)
+    filter(!term %in% exclude_words) %>%
+    top_n(n = num_words, wt = beta) %>%
+    mutate(rank = dense_rank(beta)) %>%
+    select(topic, term, rank) %>%
+    arrange(topic, rank)
 
   return(final_topic_words)
 }
@@ -90,8 +87,6 @@ summarise_topics <- function(dataframe,
 #'
 #' Function which takes in a dataframe and column and produces another column,
 #' denoting which topic each response is most relevant to
-#'
-#' @importFrom dplyr %>%
 #'
 #' @param dataframe dataframe or tibble of survey responses
 #' @param column string variable of free text responses to which the determine_topics() function
@@ -115,21 +110,21 @@ classify_topics <- function(dataframe,
                             confidence = FALSE) {
 
   gamma_matrix <- determine_topics(dataframe = dataframe,
-                                   column = dplyr::enquo(column),
+                                   column = enquo(column),
                                    num_topics = num_topics) %>%
     tidytext::tidy(matrix = "gamma") %>%
-    dplyr::group_by(document) %>%
-    dplyr::summarise(topic = topic[which.max(gamma)],
-                    confidence = max(gamma)/(max(gamma)+dplyr::nth(gamma, n=2, order_by = desc(gamma))))
+    group_by(document) %>%
+    summarise(topic = topic[which.max(gamma)],
+                    confidence = max(gamma)/(max(gamma)+nth(gamma, n=2, order_by = desc(gamma))))
 
   if (output == '') {
-    output <- paste0(dplyr::quo_name(dplyr::enquo(column)), "_topic")
+    output <- paste0(quo_name(enquo(column)), "_topic")
   }
 
   return_df <- dataframe %>%
-    dplyr::mutate(document = as.character(seq_along(dplyr::pull(., 1)))) %>%
-    dplyr::left_join(gamma_matrix, by = c("document")) %>%
-    dplyr::mutate(confidence = ifelse(!is.na(confidence),
+    mutate(document = as.character(seq_along(pull(., 1)))) %>%
+    left_join(gamma_matrix, by = c("document")) %>%
+    mutate(confidence = ifelse(!is.na(confidence),
                                 paste0(round(confidence*100, digits = 1), "%"),
                                 confidence)) %>%
     tidyr::replace_na(list(topic = "none", confidence = "n/a")) %>%

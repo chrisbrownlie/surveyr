@@ -1,6 +1,5 @@
 #' Function to clean single text column, remove punctuation and standardise
 #'
-#' @importFrom dplyr %>%
 #'
 #' @param data dataframe or tibble with a row per survey response
 #' @param column name of a character column in the data frame to be cleaned
@@ -15,9 +14,9 @@ clean_column <- function(data,
                          num = FALSE,
                          null_response = TRUE) {
 
-  column <- dplyr::enquo(column)
+  column <- enquo(column)
 
-  new_col <- dplyr::pull(data, {{ column }}) %>%
+  new_col <- pull(data, {{ column }}) %>%
     stringr::str_replace_all(pattern = "[^[:alnum:][:space:]\\[\\]\\.\\?]", replacement = "") %>%
     stringr::str_replace_all(pattern = "[[:space:]]+", replacement = " ") %>%
     tolower()
@@ -32,6 +31,6 @@ clean_column <- function(data,
       stringr::str_replace_all(pattern = "^(no|nothing|none|na|not really|no thanks|no thank you|n/a)(\\.)?[[:space:]]*$", replacement = "")
   }
 
-  data[[dplyr::quo_name(column)]] <- new_col
+  data[[quo_name(column)]] <- new_col
   return(data)
 }

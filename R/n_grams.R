@@ -1,7 +1,5 @@
 #' Function to tabulate the most commonly appearing n-grams in a text column
 #'
-#' @importFrom dplyr %>%
-#'
 #' @param data dataframe or tibble with a row per survey response
 #' @param column name of a character column in the data frame to be tabulated
 #' @param word optional string indicating how to filter the resulting dataframe (only return ngrams containing 'word')
@@ -20,24 +18,24 @@ n_grams <- function(data,
                    min = 2,
                    stop_thresh = 0.7) {
 
-  column <- dplyr::enquo(column)
+  column <- enquo(column)
 
   n_grams <- select(data, 1, {{ column }}) %>%
     tidytext::unnest_tokens(input = {{ column }},
                             output = "ngram",
                             token = "ngrams",
                             n = n) %>%
-    dplyr::group_by(ngram) %>%
-    dplyr::summarise(Count=n()) %>%
-    dplyr::arrange(-Count) %>%
-    dplyr::filter(Count >= min,
+    group_by(ngram) %>%
+    summarise(Count=n()) %>%
+    arrange(-Count) %>%
+    filter(Count >= min,
                   !is.na(ngram)) %>%
-    dplyr::rowwise() %>%
-    dplyr::mutate(sw1 = sum(stringr::str_extract_all(ngram, pattern = "[[:alpha:]]+", simplify = TRUE) %in% tm::stopwords("en")),
+    rowwise() %>%
+    mutate(sw1 = sum(stringr::str_extract_all(ngram, pattern = "[[:alpha:]]+", simplify = TRUE) %in% tm::stopwords("en")),
                   prop = sw1/length(stringr::str_extract_all(ngram, pattern = "[[:alpha:]]+", simplify = TRUE))) %>%
-    dplyr::ungroup() %>%
-    dplyr::filter(prop <= stop_thresh) %>%
-    dplyr::select(-sw1, -prop)
+    ungroup() %>%
+    filter(prop <= stop_thresh) %>%
+    select(-sw1, -prop)
 
   if (word == "") {
 
@@ -46,7 +44,7 @@ n_grams <- function(data,
   } else {
 
     output <- n_grams %>%
-      dplyr::filter(stringr::str_detect(ngram, pattern = word))
+      filter(stringr::str_detect(ngram, pattern = word))
 
   }
 

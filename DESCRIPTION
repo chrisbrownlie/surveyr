@@ -14,8 +14,7 @@ License: file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: 
-  dplyr, 
-  formattable,
+  grid,
   stringr, 
   tidytext,
   tm,
@@ -24,4 +23,6 @@ Imports:
   RColorBrewer,
   lexicon,
   topicmodels
+Depends:
+  dplyr
 RoxygenNote: 6.1.1

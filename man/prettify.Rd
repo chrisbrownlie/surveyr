@@ -5,8 +5,7 @@
 \title{Function which takes in a dataframe and abstracts the use of
 the formattable package by creating a colourful standardised table, output as an image}
 \usage{
-prettify(object, alias = c(""), align = c("l"), count_bar = FALSE,
-  colour_groups = FALSE)
+prettify(object, alias = c(""), title = "", plot = TRUE)
 }
 \arguments{
 \item{object}{dataframe}
@@ -14,15 +13,13 @@ prettify(object, alias = c(""), align = c("l"), count_bar = FALSE,
 \item{alias}{character vector indicating what the columns should be renamed, must be a named vector or
 the same length as the number of columns}
 
-\item{align}{character vector denoting, for each column, whether it should be left- ("l"), right- ("r") or centre- ("c") aligned.
-If length one, will be recycled for every column.}
+\item{title}{a string denoting the title of the table, defaults to the name of 'object'}
 
-\item{count_bar}{logical indicating whether a bar should be added to the count column to visualise the count}
-
-\item{colour_groups}{logical indicating whether the groups of the first column should be distinguished by colours}
+\item{plot}{logical flag indicating whether to plot the table or simply return the formatted object for
+subsequent arranging/plotting}
 }
 \value{
-Newly formatted formattable object
+Newly formatted object
 }
 \description{
 Function which takes in a dataframe and abstracts the use of

@@ -3,3 +3,4 @@
 .Rbuildignore
 R/sysdata.rda
 *.html
+*.rda

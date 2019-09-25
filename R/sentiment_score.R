@@ -1,7 +1,5 @@
 #' Function to return a sentiment score for each response
 #'
-#' @importFrom dplyr %>%
-#'
 #' @param data dataframe or tibble with a row per survey response
 #' @param column name of a character column in the data frame which can be used to calculate the sentiment
 #' @param output string representing the name of the new sentiment column, defaults to '[column]_sentiment'
@@ -16,7 +14,7 @@ sentiment_score <- function(data,
                             output = "",
                             display = "simple") {
 
-  column <- dplyr::enquo(column)
+  column <- enquo(column)
 
   if (!display %in% c("simple", "num", "rank")) {
     stop("Error: Argument 'display' must be one of 'simple', 'num' or 'rank'. See documentation for more information.")
@@ -40,26 +38,26 @@ sentiment_score <- function(data,
 
   # Get default for output name from column name
   if (output == "") {
-    output <- paste0(dplyr::quo_name(column), "_sentiment")
+    output <- paste0(quo_name(column), "_sentiment")
   }
 
 
   # Apply sentiment analysis to get a column of sentiments
   sentiments <- data %>%
-    dplyr::pull({{ column }}) %>%
+    pull({{ column }}) %>%
     sentimentr::get_sentences() %>%
     sentimentr::sentiment(polarity_dt = p_key,
                           valence_shifters_dt = v_key,
                           n.before = 5,
                           n.after = 8) %>%
-    dplyr::group_by(element_id) %>%
-    dplyr::summarise(sentiment = round(sentimentr::average_weighted_mixed_sentiment(sentiment,
+    group_by(element_id) %>%
+    summarise(sentiment = round(sentimentr::average_weighted_mixed_sentiment(sentiment,
                                                                                     mixed.less.than.zero.weight = 5),
                                        digits = 2))
 
   if (display == "simple") {
     sentiments <- sentiments %>%
-      dplyr::mutate(sentiment = case_when(
+      mutate(sentiment = case_when(
         sentiment < (-0.5) ~ "very negative",
         sentiment < (-0.1) ~ "negative",
         sentiment < 0 ~ "mostly neutral",
@@ -71,13 +69,13 @@ sentiment_score <- function(data,
     sentiments$sentiment <- factor(sentiments$sentiment, levels = c("very negative", "negative", "completely neutral", "mostly neutral", "positive", "very positive"))
   } else if (display == "rank") {
     sentiments <- sentiments %>%
-      dplyr::mutate(sentiment = dplyr::min_rank(desc(sentiment)))
+      mutate(sentiment = min_rank(desc(sentiment)))
   }
 
   names(sentiments) = c("id", output)
 
   new_data <- data %>%
-    dplyr::bind_cols(sentiments[,2])
+    bind_cols(sentiments[,2])
 
   return(new_data)
 
