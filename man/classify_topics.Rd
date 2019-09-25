@@ -5,7 +5,7 @@
 \title{classify_topics()}
 \usage{
 classify_topics(dataframe, column, output = "", topic_aliases = "",
-  confidence = FALSE)
+  num_topics = 2, confidence = FALSE)
 }
 \arguments{
 \item{dataframe}{dataframe or tibble of survey responses}
@@ -17,6 +17,8 @@ has already been applied in this session}
 
 \item{topic_aliases}{named string vector, denoting for each topic (1,2.. etc.) what it is to
 be renamed. Leave blank to stay as 'topic1', 'topic2' etc.}
+
+\item{num_topics}{integer denoting the number of distinct topics to assume are present. Defaults to 2}
 
 \item{confidence}{logical indicating whether to include topic confidence in output (how likely
 that the classified topic is definitive)}

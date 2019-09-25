@@ -1,3 +1,6 @@
 ^surveyr\.Rproj$
 ^\.Rproj\.user$
 ^data-raw$
+trust_survey_report.Rmd
+trust_survey_report.html
+testing_demo.R

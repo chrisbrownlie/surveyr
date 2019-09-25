@@ -4,7 +4,8 @@
 \alias{summarise_topics}
 \title{summarise_topics}
 \usage{
-summarise_topics(dataframe, column, num_words = 3, exclude = "")
+summarise_topics(dataframe, column, num_words = 3, exclude = "",
+  num_topics = 2)
 }
 \arguments{
 \item{dataframe}{dataframe or tibble of survey responses}
@@ -12,6 +13,10 @@ summarise_topics(dataframe, column, num_words = 3, exclude = "")
 \item{column}{string variable of free text responses which has a specified LDA model}
 
 \item{num_words}{integer denoting the number of top words to return for each topic}
+
+\item{exclude}{character vector of words to exclude from topic modelling}
+
+\item{num_topics}{integer denoting the number of distinct topics to assume are present. Defaults to 2}
 }
 \value{
 a dataframe, where each column is a topic and contains the most common words in those topics

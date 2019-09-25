@@ -1,6 +1,6 @@
 Package: surveyr
 Title: A Package for Analysing Survey Responses
-Version: 0.1
+Version: 0.1.1
 Authors@R: 
     person(given = "Chris",
            family = "Brownlie",
@@ -18,5 +18,10 @@ Imports:
   formattable,
   stringr, 
   tidytext,
-  tm
+  tm,
+  tidyr,
+  sentimentr,
+  RColorBrewer,
+  lexicon,
+  topicmodels
 RoxygenNote: 6.1.1
