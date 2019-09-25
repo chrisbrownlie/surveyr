@@ -27,16 +27,16 @@ sentiment_score <- function(data,
                              y = c(-1, -1, -1, -1, -2, -1, -2, 0, -0.5, -0.5, 1, 0.5, 0.8, 0.8),
                              stringsAsFactors = FALSE)
 
-  add_valence <- data.frame(x = c("had hoped", "could not be more", "did not", "far from", "always", "lack of", "would be", "could be", "could have", "if", "needs to be better", "not convinced"),
-                            y = c("1", "2", "1", "1", "2", "1", "3", "3", "3", "3", "1", "1"),
+  add_valence <- data.frame(x = c("had hoped", "could not be more", "did not", "far from", "always", "lack of", "could be", "if", "needs to be better", "not convinced"),
+                            y = c("1", "2", "1", "1", "2", "1", "3", "3", "1", "1"),
                             stringsAsFactors = FALSE)
 
   p_key <- sentimentr::update_polarity_table(key = lexicon::hash_sentiment_jockers_rinker,
                                                drop = c("wasteful", "accessible", "would be", "could have"),
                                                x = add_polarity)
   v_key <- sentimentr::update_valence_shifter_table(key = lexicon::hash_valence_shifters,
-                                                      comparison = p_key_2,
-                                                      x = add_valence)
+                                                    drop = c("would be", "could have"),
+                                                    x = add_valence)
 
   # Get default for output name from column name
   if (output == "") {
