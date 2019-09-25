@@ -8,6 +8,8 @@
 #' @param stopwords logical indicating whether to remove stopwords or not. Defaults to TRUE
 #' @param remove character vector of additional words to remove
 #' @param proportion logical indicating whether to include the proportion of responses that contained the word
+#' @param pretty one of either 'no', 'plot' or 'return'. Defaults to 'no'. 'plot' will end the function call by
+#' applying the prettify() function to the output with plot = TRUE. 'return' will apply the prettify() function with plot = FALSE.
 #'
 #' @return Table of most common words with the number of times they appear in each group
 #'
@@ -19,7 +21,14 @@ common_words <- function(data,
                          min = 5,
                          stopwords = TRUE,
                          remove = c(""),
-                         proportion = FALSE) {
+                         proportion = FALSE,
+                         pretty = 'no') {
+
+  # Argument check on 'pretty'
+  if (!pretty %in% c('no', 'plot', 'return')) {
+    stop("Error: argument 'pretty' must be one of: 'no', 'plot' or 'return'. See documentation for info.")
+  }
+
 
   column <- enquo(column)
   cols <- enquos(...)
@@ -77,6 +86,16 @@ common_words <- function(data,
     }
 
 
-    return(c_w)
+    if (pretty == "no") {
+      return(c_w)
+    } else if (pretty == "plot") {
+      c_w %>%
+        prettify(plot = TRUE,
+                 title = " ")
+    } else if (pretty == "return") {
+      c_w <- c_w %>%
+        prettify(plot = FALSE)
+      return(c_w)
+    }
 }
 
