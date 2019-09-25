@@ -6,73 +6,77 @@
 #' @param object dataframe
 #' @param alias character vector indicating what the columns should be renamed, must be a named vector or
 #' the same length as the number of columns
-#' @param count_bar logical indicating whether a bar should be added to the count column to visualise the count
-#' @param colour_groups logical indicating whether the groups of the first column should be distinguished by colours
+#' @param title a string denoting the title of the table, defaults to the name of 'object'
+#' @param plot logical flag indicating whether to plot the table or simply return the formatted object for
+#' subsequent arranging/plotting
 #'
-#' @return Newly formatted formattable object
+#' @return Newly formatted object
 #'
 #' @export
 prettify <- function(object,
                      alias = c(""),
-                     align = c("l"),
-                     count_bar = FALSE,
-                     colour_groups = FALSE) {
+                     title = "",
+                     plot = TRUE) {
 
-  new_object <- object
+  obj_name <- quo_name(enquo(object))
+  cols <- ncol(object)
+  rows <- nrow(object)
 
-  if (alias != c("")) {
-    new_names <- names(object)
-    for (i in seq_along(alias)) {
-      new_names[new_names == alias[i]] <- names(alias[i])
-    }
-    names(new_object) <- new_names
+  # Checks on alias argument
+  named <- length(names(alias))>0
+  length <- length(alias)
+  matched <- sum(names(alias) %in% names(object))
+  unmatched <- names(alias)[!names(alias) %in% names(object)]
+
+  error_flag <- FALSE
+  if (named == FALSE & length != cols & alias != c("")) {
+    error_flag <- TRUE
+    error_string <- paste0("\n'alias' is not a named character vector and has length ", length, " whereas object has ", cols, " columns.")
+  } else if (named == TRUE & matched != length(alias)) {
+    error_flag <- TRUE
+    error_string <- paste0("\nThe names of 'alias' do not all match to columns in 'object'. The following columns are not present in object: '", paste(unmatched, collapse = "', '"), "'.")
   }
 
-  colours <- rep(c(RColorBrewer::brewer.pal(9, "Pastel1"),
-               RColorBrewer::brewer.pal(8, "Pastel2"),
-               RColorBrewer::brewer.pal(9, "Set1"),
-               RColorBrewer::brewer.pal(8, "Set2"),
-               RColorBrewer::brewer.pal(12, "Set3")), 10)
-
-  groups <- new_object %>%
-    dplyr::ungroup() %>%
-    dplyr::group_by("id" = .[[1]]) %>%
-    dplyr::summarise(rows = n())
-  groups <- groups %>%
-    dplyr::mutate(colour = colours[seq_along(dplyr::pull(groups, 1))],
-                  cumul = cumsum(rows))
-
-  groups <- data.frame("id" = "NA", "colour" = "NA", rows = 1, cumul = 0,
-                       stringsAsFactors = FALSE) %>%
-    bind_rows(groups)
-
-  if (count_bar == TRUE & colour_groups == TRUE) {
-    colour_reps <- c()
-    for (i in seq_along(dplyr::pull(groups, 1))[-1]) {
-      colour_reps <- c(colour_reps, rep(groups$colour[i], groups$rows[i]))
+  if (error_flag == TRUE) {
+    stop(paste0("Error: Argument 'alias' must be a character vector that is either named (with each name corresponding to a column in object), or have the same length as the number of columns in object. The following issue was found: ", error_string))
+  } else if (error_flag == FALSE) {
+    if (length(alias)==1) {
+      if (alias != c("")) {
+        new_object <- object
+        names(new_object)[names(new_object) %in% names(alias)] <- alias
+      } else {
+        new_object <- object
+      }
+    } else {
+      if (length(alias)!=cols) {
+        new_object <- object
+        names(new_object)[names(new_object) %in% names(alias)] <- alias
+      } else {
+        new_object <- object
+        names(new_object) <- alias
+      }
     }
-
-    formatlist <- c(list(Count = formattable::color_bar(color = "lightblue", fun = function(x) {as.numeric(x)/max(as.numeric(x))})),
-                       lapply(seq_along(dplyr::pull(groups, 1))[-1], function(rownum) {
-                         formattable::area(col = 1, row = (groups$cumul[[rownum-1]]+1):groups$cumul[[rownum]]) ~ formattable::color_tile(groups$colour[[rownum]],
-                                                                                                                           groups$colour[[rownum]])}))
-  } else if (count_bar == TRUE & colour_groups == FALSE) {
-    formatlist <- list(Count = formattable::color_bar(color = "lightblue", fun = function(x) {as.numeric(x)/max(as.numeric(x))}))
-  } else if (count_bar == FALSE & colour_groups == TRUE) {
-    colour_reps <- c()
-    for (i in seq_along(dplyr::pull(groups, 1))[-1]) {
-      colour_reps <- c(colour_reps, rep(groups$colour[i], groups$rows[i]))
-    }
-    formatlist <- lapply(seq_along(dplyr::pull(groups, 1))[-1], function(rownum) {
-                      formattable::area(col = 1, row = (groups$cumul[[rownum-1]]+1):groups$cumul[[rownum]]) ~ formattable::color_tile(groups$colour[[rownum]],
-                                                                                                                                      groups$colour[[rownum]])})
-  } else {
-    formatlist <- list()
   }
 
-  return_ft <- new_object %>%
-    formattable::formattable(align = c(rep("l", which(names(new_object)=="Count"|names(new_object)=="count")-2), "c", "l", "c"),
-                                                   formatlist)
+  # Checks on title argument
+  if (title == "") {
+    title <- obj_name
+  }
 
-  return(return_ft)
+  # Make a table from the object
+  out_table <- object %>%
+    tableGrob(rows = NULL) %>%
+    gtable_add_grob(grobs = rectGrob(gp = gpar(fill = NA, lwd = 2)),
+                    t = 2, b = rows + 1, l = 1, r = cols) %>%
+    gtable_add_grob(grobs = rectGrob(gp = gpar(fill = NA, lwd = 2)),
+                    t = 1, b = 1, l = 1, r = cols) %>%
+    gtable_add_rows(
+      heights = unit(max(10, round(nchar(title)/10)*2), "mm"),
+      pos = 0) %>%
+    gtable_add_grob(
+      textGrob(paste(strwrap(title, width = 10*(cols+1), simplify = TRUE), collapse = "\n"), gp = gpar(fontsize = 10)),
+      t = 1, b = 1, l = 1, r = cols)
+
+  plot(out_table)
 }
+

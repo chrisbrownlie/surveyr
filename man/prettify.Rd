@@ -14,6 +14,9 @@ prettify(object, alias = c(""), align = c("l"), count_bar = FALSE,
 \item{alias}{character vector indicating what the columns should be renamed, must be a named vector or
 the same length as the number of columns}
 
+\item{align}{character vector denoting, for each column, whether it should be left- ("l"), right- ("r") or centre- ("c") aligned.
+If length one, will be recycled for every column.}
+
 \item{count_bar}{logical indicating whether a bar should be added to the count column to visualise the count}
 
 \item{colour_groups}{logical indicating whether the groups of the first column should be distinguished by colours}
