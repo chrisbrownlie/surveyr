@@ -1,8 +1,6 @@
 #' Function which takes in a dataframe and abstracts the use of
 #' the formattable package by creating a colourful standardised table, output as an image
 #'
-#' @importFrom dplyr %>%
-#'
 #' @param object dataframe
 #' @param alias character vector indicating what the columns should be renamed, must be a named vector or
 #' the same length as the number of columns
@@ -72,16 +70,17 @@ prettify <- function(object,
 
   # Make a table from the object
   out_table <- object %>%
-    tableGrob(rows = NULL) %>%
-    gtable_add_grob(grobs = rectGrob(gp = gpar(fill = NA, lwd = 2)),
-                    t = 2, b = rows + 1, l = 1, r = cols) %>%
-    gtable_add_grob(grobs = rectGrob(gp = gpar(fill = NA, lwd = 2)),
-                    t = 1, b = 1, l = 1, r = cols) %>%
-    gtable_add_rows(
-      heights = unit(max(10, round(nchar(title)/10)*2), "mm"),
+    gridExtra::tableGrob(rows = NULL) %>%
+    gtable::gtable_add_grob(grobs = grid::rectGrob(gp = grid::gpar(fill = NA, lwd = 2)),
+                            t = 2, b = rows + 1, l = 1, r = cols) %>%
+    gtable::gtable_add_grob(grobs = grid::rectGrob(gp = grid::gpar(fill = NA, lwd = 2)),
+                            t = 1, b = 1, l = 1, r = cols) %>%
+    gtable::gtable_add_rows(
+      heights = grid::unit(max(10, round(nchar(title)/10)*2), "mm"),
       pos = 0) %>%
-    gtable_add_grob(
-      textGrob(paste(strwrap(title, width = 10*(cols+1), simplify = TRUE), collapse = "\n"), gp = gpar(fontsize = 10)),
+    gtable::gtable_add_grob(
+      grid::textGrob(paste(strwrap(title, width = 10*(cols+1), simplify = TRUE), collapse = "\n"),
+                     gp = grid::gpar(fontsize = 10)),
       t = 1, b = 1, l = 1, r = cols)
 
 
