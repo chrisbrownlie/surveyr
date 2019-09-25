@@ -48,6 +48,8 @@ determine_topics <- function(dataframe,
 #' @param dataframe dataframe or tibble of survey responses
 #' @param column string variable of free text responses which has a specified LDA model
 #' @param num_words integer denoting the number of top words to return for each topic
+#' @param exclude character vector of words to exclude from topic modelling
+#' @param num_topics integer denoting the number of distinct topics to assume are present. Defaults to 2
 #'
 #' @return a dataframe, where each column is a topic and contains the most common words in those topics
 #'
@@ -64,7 +66,6 @@ summarise_topics <- function(dataframe,
     tidytext::tidy(matrix = "beta")
 
   topic_words_initial <- beta_matrix %>%
-    dplyr::mutate(topic = surveyr:::topicnames[topic]) %>%
     dplyr::filter(!term %in% tm::stopwords("en")) %>%
     dplyr::group_by(topic) %>%
     dplyr::top_n(n = 5*num_words, wt = beta)
@@ -98,6 +99,7 @@ summarise_topics <- function(dataframe,
 #' @param output name of the new column to be produced, defaults to '{column}_topic'
 #' @param topic_aliases named string vector, denoting for each topic (1,2.. etc.) what it is to
 #' be renamed. Leave blank to stay as 'topic1', 'topic2' etc.
+#' @param num_topics integer denoting the number of distinct topics to assume are present. Defaults to 2
 #' @param confidence logical indicating whether to include topic confidence in output (how likely
 #' that the classified topic is definitive)
 #'
