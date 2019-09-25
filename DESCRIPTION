@@ -15,6 +15,8 @@ Encoding: UTF-8
 LazyData: true
 Imports: 
   grid,
+  gridExtra,
+  gtable,
   stringr, 
   tidytext,
   tm,
@@ -22,7 +24,8 @@ Imports:
   sentimentr,
   RColorBrewer,
   lexicon,
-  topicmodels
+  topicmodels,
+  purrr
 Depends:
   dplyr
 RoxygenNote: 6.1.1
