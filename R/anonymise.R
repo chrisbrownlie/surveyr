@@ -82,3 +82,70 @@ anonymise <- function(data,
   data[[quo_name(column)]] <- anon_col
   return(data)
 }
+
+
+#' Function to simplify application of anonymise function to every column in the dataset
+#'
+#' @param data dataframe or tibble with a row per survey response
+#' @param add_names character vector of names to anonymise (optional)
+#' @param auto logical indicating whether to look for names to anonymise in the column. Defaults to TRUE.
+#' @param complete logical indicating whether to anonymise every capitalised word that doesn't start a sentence. Defaults to FALSE.
+#' @param identify logical indicating whether anonymised names should be distinguishable from each other by numbers. Defaults to FALSE.
+#' @param gender logical indicating whether to remove references to gender pronouns (he/she him/her etc.). Defaults to FALSE.
+#'
+#' @return Original dataframe with all columns anonymised
+#'
+#' @export
+anonymise_all <- function(data,
+                          add_names = c(""),
+                          auto = TRUE,
+                          complete = FALSE,
+                          identify = FALSE,
+                          gender = FALSE) {
+
+  new_data <- purrr::reduce(.x = names(data),
+                            .f = anonymise,
+                            .init = data,
+                            add_names = add_names,
+                            auto = auto,
+                            complete = complete,
+                            identify = identify,
+                            gender = gender)
+
+  return(new_data)
+}
+
+#' Function to simplify application of anonymise function to multiple specified columns in the dataset
+#'
+#' @param data dataframe or tibble with a row per survey response
+#' @param ... columns for the anonymise function to be applied to
+#' @param add_names character vector of names to anonymise (optional)
+#' @param auto logical indicating whether to look for names to anonymise in the column. Defaults to TRUE.
+#' @param complete logical indicating whether to anonymise every capitalised word that doesn't start a sentence. Defaults to FALSE.
+#' @param identify logical indicating whether anonymised names should be distinguishable from each other by numbers. Defaults to FALSE.
+#' @param gender logical indicating whether to remove references to gender pronouns (he/she him/her etc.). Defaults to FALSE.
+#'
+#' @return Original dataframe with all columns anonymised
+#'
+#' @export
+anonymise_at <- function(data,
+                          ...,
+                          add_names = c(""),
+                          auto = TRUE,
+                          complete = FALSE,
+                          identify = FALSE,
+                          gender = FALSE) {
+
+  cols <- purrr::map(enquos(...), quo_name) %>%
+    unlist()
+  new_data <- purrr::reduce(.x = cols,
+                            .f = anonymise,
+                            .init = data,
+                            add_names = add_names,
+                            auto = auto,
+                            complete = complete,
+                            identify = identify,
+                            gender = gender)
+
+  return(new_data)
+}
