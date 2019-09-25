@@ -77,6 +77,11 @@ prettify <- function(object,
       textGrob(paste(strwrap(title, width = 10*(cols+1), simplify = TRUE), collapse = "\n"), gp = gpar(fontsize = 10)),
       t = 1, b = 1, l = 1, r = cols)
 
-  plot(out_table)
+
+  if (plot == TRUE) {
+    plot(out_table)
+  } else {
+    return(out_table)
+  }
 }
 
