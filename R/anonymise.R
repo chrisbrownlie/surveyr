@@ -41,7 +41,7 @@ anonymise <- function(data,
 
   anon_col <- pull(data, {{ column }})
 
-  if (length(fullnames)>0|complete == TRUE) {
+  if (length(fullnames)>0|(complete == TRUE & length(allnames)>0)) {
     if (identify == TRUE) {
       fn_replacement_df <- data.frame(name = fullnames,
                                       replacement = paste0("[name", sample(x = 1:(length(fullnames)),
