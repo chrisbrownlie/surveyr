@@ -61,6 +61,13 @@ prettify <- function(object,
   # Checks on title argument
   if (title == "") {
     title <- obj_name
+  } else if (!is.character(title)|length(title)!=1) {
+    stop("Error: 'title' must be a single string object.")
+  }
+
+  # Checks on plot argument
+  if (!is.logical(plot)) {
+    stop("Error: 'plot' must be either TRUE to plot the prettified table or FALSE to return it as a graphical object.")
   }
 
   # Make a table from the object
