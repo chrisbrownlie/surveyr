@@ -2,31 +2,37 @@
 % Please edit documentation in R/common_words.R
 \name{common_words}
 \alias{common_words}
-\title{Function to tabulate a text column, showing the most commonly used words, optionally broken down by another column(s)}
+\title{common_words}
 \usage{
-common_words(data, column, ..., n = 3, min = 5, stopwords = TRUE,
-  remove = c(""), proportion = FALSE)
+common_words(data, column, ..., n = 3, min = 5,
+  remove_stopwords = TRUE, remove = c(""), proportion = FALSE,
+  lemmatise = FALSE, pretty = "no")
 }
 \arguments{
 \item{data}{dataframe or tibble with a row per survey response}
 
 \item{column}{name of a character column in the data frame to be tabulated}
 
-\item{...}{optional column(s) to split into groups}
+\item{...}{optional column(s) to use to split into groups}
 
 \item{n}{number indicating how many most common words to return for each group. Defaults to 3}
 
 \item{min}{number indicating the minimum number of times a word needs to appear for it to be included in output, defaults to 5}
 
-\item{stopwords}{logical indicating whether to remove stopwords or not. Defaults to TRUE}
+\item{remove_stopwords}{logical indicating whether to remove stopwords or not. Defaults to TRUE}
 
 \item{remove}{character vector of additional words to remove}
 
 \item{proportion}{logical indicating whether to include the proportion of responses that contained the word}
+
+\item{lemmatise}{logical indicating whether to use the textstem package to lemmatise the strings before calculating common words}
+
+\item{pretty}{one of either 'no', 'plot' or 'return'. Defaults to 'no'. 'plot' will end the function call by
+applying the prettify() function to the output with plot = TRUE. 'return' will apply the prettify() function with plot = FALSE.}
 }
 \value{
 Table of most common words with the number of times they appear in each group
 }
 \description{
-Function to tabulate a text column, showing the most commonly used words, optionally broken down by another column(s)
+Tabulate a text column, showing the most commonly used words, optionally broken down by another demographics column(s)
 }

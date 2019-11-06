@@ -2,27 +2,40 @@
 % Please edit documentation in R/n_grams.R
 \name{n_grams}
 \alias{n_grams}
-\title{Function to tabulate the most commonly appearing n-grams in a text column}
+\title{n_grams}
 \usage{
-n_grams(data, column, word = "", n = 2, min = 2, stop_thresh = 0.7)
+n_grams(data, column, ..., words = 2, filter_word = "",
+  remove = c(""), n = 5, min = 3, stop_thresh = 0.7,
+  proportion = FALSE, pretty = "no")
 }
 \arguments{
 \item{data}{dataframe or tibble with a row per survey response}
 
 \item{column}{name of a character column in the data frame to be tabulated}
 
-\item{word}{optional string indicating how to filter the resulting dataframe (only return ngrams containing 'word')}
+\item{...}{optional column(s) to split into groups}
 
-\item{n}{number indicating what kind of n-grams to return (bigram, trigram...)}
+\item{words}{number indicating what kind of n-grams to return (bigram, trigram...), defaults to 2 (bigrams)}
 
-\item{min}{number indicating the minimum number of times a word needs to appear for it to be included in output, defaults to 5}
+\item{filter_word}{optional word to filter results by (i.e. only show n-grams containing this word)}
+
+\item{remove}{optional vector of words to exclude (i.e. remove all n-grams containing at least one of these words)}
+
+\item{n}{number of n-grams to show for each group, defaults to 3}
+
+\item{min}{number indicating the minimum number of times a word needs to appear for it to be included in output, defaults to 3}
 
 \item{stop_thresh}{numeric indicating the threshold to remove stopwords (i.e. maximum proportion of stopwords to words
-allowed). 1 includes all n-grams regardless of stop words, 0 excludes all n-grams containing one or more stopwords.}
+allowed). 1 includes all n-grams regardless of stop words, 0 excludes all n-grams containing one or more stopwords. Defaults to 0.7.}
+
+\item{proportion}{logical indicating whether to include the proportion of responses containing this n-gram, defaults to FALSE}
+
+\item{pretty}{one of either 'no', 'plot' or 'return'. Defaults to 'no'. 'plot' will end the function call by
+applying the prettify() function to the output with plot = TRUE. 'return' will apply the prettify() function with plot = FALSE.}
 }
 \value{
 Table of n-grams with the number of times they appear
 }
 \description{
-Function to tabulate the most commonly appearing n-grams in a text column
+Determine the most common n-grams used in a column of text responses, optionally broken down by a demographic column(s).
 }

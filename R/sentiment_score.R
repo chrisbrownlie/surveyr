@@ -1,4 +1,6 @@
-#' Function to return a sentiment score for each response
+#' sentiment_score
+#'
+#' Return a sentiment score for each response, in a variety of different ways
 #'
 #' @param data dataframe or tibble with a row per survey response
 #' @param column name of a character column in the data frame which can be used to calculate the sentiment

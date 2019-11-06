@@ -2,8 +2,7 @@
 % Please edit documentation in R/prettify.R
 \name{prettify}
 \alias{prettify}
-\title{Function which takes in a dataframe and abstracts the use of
-the formattable package by creating a colourful standardised table, output as an image}
+\title{prettify}
 \usage{
 prettify(object, alias = c(""), title = "", plot = TRUE)
 }
@@ -22,6 +21,6 @@ subsequent arranging/plotting}
 Newly formatted object
 }
 \description{
-Function which takes in a dataframe and abstracts the use of
-the formattable package by creating a colourful standardised table, output as an image
+Takes in a dataframe and abstracts the use of
+the grid packages by creating a clean standardised table, output as an image
 }

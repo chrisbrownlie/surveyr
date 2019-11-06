@@ -2,7 +2,7 @@
 % Please edit documentation in R/topics.R
 \name{classify_topics}
 \alias{classify_topics}
-\title{classify_topics()}
+\title{classify_topics}
 \usage{
 classify_topics(dataframe, column, output = "", topic_aliases = "",
   num_topics = 2, confidence = FALSE)
@@ -31,3 +31,7 @@ topic each response in 'column' falls in to, optionally aliased
 Function which takes in a dataframe and column and produces another column,
 denoting which topic each response is most relevant to
 }
+\seealso{
+Other topics: \code{\link{summarise_topics}}
+}
+\concept{topics}

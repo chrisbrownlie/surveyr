@@ -1,13 +1,16 @@
-#' Function to tabulate a text column, showing the most commonly used words, optionally broken down by another column(s)
+#' common_words
+#'
+#' Tabulate a text column, showing the most commonly used words, optionally broken down by another demographics column(s)
 #'
 #' @param data dataframe or tibble with a row per survey response
 #' @param column name of a character column in the data frame to be tabulated
-#' @param ... optional column(s) to split into groups
+#' @param ... optional column(s) to use to split into groups
 #' @param n number indicating how many most common words to return for each group. Defaults to 3
 #' @param min number indicating the minimum number of times a word needs to appear for it to be included in output, defaults to 5
-#' @param stopwords logical indicating whether to remove stopwords or not. Defaults to TRUE
+#' @param remove_stopwords logical indicating whether to remove stopwords or not. Defaults to TRUE
 #' @param remove character vector of additional words to remove
 #' @param proportion logical indicating whether to include the proportion of responses that contained the word
+#' @param lemmatise logical indicating whether to use the textstem package to lemmatise the strings before calculating common words
 #' @param pretty one of either 'no', 'plot' or 'return'. Defaults to 'no'. 'plot' will end the function call by
 #' applying the prettify() function to the output with plot = TRUE. 'return' will apply the prettify() function with plot = FALSE.
 #'
@@ -19,9 +22,10 @@ common_words <- function(data,
                          ...,
                          n = 3,
                          min = 5,
-                         stopwords = TRUE,
+                         remove_stopwords = TRUE,
                          remove = c(""),
                          proportion = FALSE,
+                         lemmatise = FALSE,
                          pretty = 'no') {
 
   # Argument check on 'pretty'
@@ -33,21 +37,24 @@ common_words <- function(data,
   column <- enquo(column)
   cols <- enquos(...)
 
-  remove <- c("", remove)
-
   words <- data %>%
     mutate(response_id = 1:nrow(data)) %>%
-    select({{ column }}, !!!cols, response_id) %>%
-    tidytext::unnest_tokens(input = {{ column }},
+    select(col = {{ column }}, !!!cols, response_id)
+  if(lemmatise == TRUE) {
+    words <- words %>%
+      mutate(col = textstem::lemmatize_strings(col))
+  }
+  words <- words %>%
+    tidytext::unnest_tokens(input = col,
                             output = "word",
                             token = "words") %>%
     group_by(!!!cols, word) %>%
     summarise(count = n(),
-                     responses = n_distinct(response_id)) %>%
+              responses = n_distinct(response_id)) %>%
     arrange(!!!cols, -count) %>%
     filter(!word %in% remove)
 
-    if (stopwords == TRUE) {
+    if (remove_stopwords == TRUE) {
       words <- words %>%
         filter(!word %in% tm::stopwords("en"))
     }
@@ -83,19 +90,20 @@ common_words <- function(data,
     } else {
       c_w <- c_w %>%
         select(-responses)
-    }
+     }
 
 
-    if (pretty == "no") {
-      return(c_w)
-    } else if (pretty == "plot") {
-      c_w %>%
-        prettify(plot = TRUE,
-                 title = " ")
-    } else if (pretty == "return") {
-      c_w <- c_w %>%
-        prettify(plot = FALSE)
-      return(c_w)
-    }
+      if (pretty == "no") {
+        return(c_w)
+      } else if (pretty == "plot") {
+        c_w %>%
+          prettify(plot = TRUE,
+                   title = paste0("Most common words in column ", quo_name(column)))
+      } else if (pretty == "return") {
+        c_w <- c_w %>%
+          prettify(plot = FALSE)
+        return(c_w)
+      }
 }
+
 

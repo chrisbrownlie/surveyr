@@ -62,6 +62,16 @@ anon_data <- new_data %>%
 
 anon_data[sample,"q24_reflections"]
 
+# Can also apply to several/all columns via anonymise_at and anonymise_all
+anon_df <- new_data %>%
+  anonymise_at(q24_reflections,
+               q22_changes,
+               add_names = "RSC",
+               identify = TRUE)
+
+anon_df <- new_data %>%
+  anonymise_all(quietly = TRUE)
+
 # Default behaviour for rest of the demo
 anon_data <- new_data %>%
   anonymise(q24_reflections)
@@ -71,17 +81,24 @@ anon_data[sample,"q24_reflections"]
 # clean_column() -----------------------------------------------------------------------------------------
 # After anonymising, column needs to be standardised (lower case, punctuation etc.) before it can be analysed
 clean_data <- anon_data %>%
-  clean_column(q24_reflections)
+  clean(q24_reflections)
 
 clean_data[sample,"q24_reflections"]
 
 # If we want to keep 'null responses'
 clean_data <- anon_data %>%
-  clean_column(q24_reflections,
-               null_response = FALSE)
+  clean(q24_reflections,
+        null_response = FALSE)
 
 clean_data[sample,"q24_reflections"]
 
+# Again, can apply to multiple columns easily
+clean_data <- anon_data %>%
+  clean_at(q24_reflections,
+           q22_changes,
+           q12_main_challenges)
+clean_data <- anon_data %>%
+  clean_all()
 
 # common_words() --------------------------------------------------------------------------------------------
 # Simple frequency analysis, filters out words that appear less than 5 times so
@@ -125,7 +142,7 @@ clean_data %>%
 clean_data %>%
   common_words(q24_reflections,
                q2_rsc_office_met,
-               stopwords = FALSE)
+               remove_stopwords = FALSE)
 
 # Can also calculate the proportion of responses in each group
 # that mentioned the word
@@ -136,21 +153,23 @@ clean_data %>%
                n = 1,
                proportion = TRUE)
 
-# Finally, if exporting to external document, can make it more visually appealing with prettify()
+# Finally, if exporting to external document, can make it more visually
+# appealing with pretty='plot' argument
 clean_data %>%
   common_words(q24_reflections,
                q2_rsc_office_met,
                proportion = TRUE,
                remove = c("meeting", "rsc", "trust"),
-               n = 2) %>%
-  prettify(alias = c("Which RSC did the respondent meet?" = "q2_rsc_office_met"),
-           count_bar = TRUE,
-           colour_groups = TRUE)
+               n = 2,
+               pretty = 'return')
 
 # n_grams() --------------------------------------------------------------------------------------------------
 # Method of tabulating most common n-grams, removing n_grams that are mostly stopwords
 clean_data %>%
-  n_grams(q24_reflections) # defaults to bigrams
+  n_grams(q24_reflections,
+          q1_position_in_trust,
+          remove = c("rsc", "trust", "meeting"),
+          pretty = 'plot') # defaults to bigrams
 
 # Can decrease the threshold to be stricter on stopwords
 clean_data %>%
@@ -169,13 +188,13 @@ clean_data %>%
   n_grams(q24_reflections,
           n = 3, # trigrams
           word = "meeting", # filter to only include n-grams containing the word 'better'
-          stop_thresh = 0.4) %>% # allow only one stopword per ngram
-  prettify(alias = c("Phrase" = "ngram"),
-           count_bar = TRUE)
+          stop_thresh = 0.4) %>%
+  prettify(plot = TRUE)
 
 # sentiment_score() -----------------------------------------
 sentiment_data <- clean_data %>%
   sentiment_score(q24_reflections)
+
 # themes ----------------------------------------------------------------------
 new_data %>%
   summarise_topics(q12_main_challenges,
@@ -183,7 +202,7 @@ new_data %>%
                    num_topics = 2)
 
 topics_data <- new_data %>%
-  clean_column(q12_main_challenges) %>%
+  clean(q12_main_challenges) %>%
   classify_topics(q12_main_challenges,
                   topic_aliases = c("1" = "finances",
                                     "2" = "growth"),

@@ -1,9 +1,8 @@
-#' determine_topics()
+#' determine_topics
 #'
-#' Function which takes in a dataframe and column and abstracts the use of
-#' the topicmodels package by applying an LDA model and saving data internally
-#' to be used later by other *_topics functions
-#'
+#' Takes in a dataframe and column and abstracts the use of
+#' the topicmodels package by applying an LDA model.
+#' Used by other *_topics functions
 #'
 #' @param dataframe dataframe or tibble of survey responses
 #' @param column string variable of free text responses to which the LDA model will be applied
@@ -39,8 +38,10 @@ determine_topics <- function(dataframe,
 
 #' summarise_topics
 #'
-#' Function to return to top unique words for each topic, running
-#' determine_topics if there is no model for that column yet
+#' Function to return to top unique words for each topic by fitting
+#' an LDA model
+#'
+#' @family topics
 #'
 #' @param dataframe dataframe or tibble of survey responses
 #' @param column string variable of free text responses which has a specified LDA model
@@ -83,10 +84,12 @@ summarise_topics <- function(dataframe,
 }
 
 
-#' classify_topics()
+#' classify_topics
 #'
 #' Function which takes in a dataframe and column and produces another column,
 #' denoting which topic each response is most relevant to
+#'
+#' @family topics
 #'
 #' @param dataframe dataframe or tibble of survey responses
 #' @param column string variable of free text responses to which the determine_topics() function

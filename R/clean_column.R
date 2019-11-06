@@ -1,4 +1,8 @@
-#' Function to clean single text column, remove punctuation and standardise
+#' clean
+#'
+#' Clean and preprocess a single text column, remove punctuation and standardise
+#'
+#' @family preprocess functions
 #'
 #' @param data dataframe or tibble with a row per survey response
 #' @param column name of a character column in the data frame to be cleaned
@@ -34,7 +38,11 @@ clean <- function(data,
   return(data)
 }
 
-#' Function to apply clean() function to all columns
+#' clean_all
+#'
+#' Apply clean() function to all columns
+#'
+#' @family preprocess functions
 #'
 #' @param data dataframe or tibble with a row per survey response
 #' @param num logical indicating whether numbers should be removed as part of cleaning process
@@ -56,7 +64,11 @@ clean_all <- function(data,
   return(new_data)
 }
 
-#' Function to apply clean() function to multiple specified columns
+#' clean_at
+#'
+#' Apply clean() function to multiple specified columns
+#'
+#' @family preprocess functions
 #'
 #' @param data dataframe or tibble with a row per survey response
 #' @param ... columns for the clean() function to be applied to

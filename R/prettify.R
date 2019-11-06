@@ -1,5 +1,7 @@
-#' Function which takes in a dataframe and abstracts the use of
-#' the formattable package by creating a colourful standardised table, output as an image
+#' prettify
+#'
+#' Takes in a dataframe and abstracts the use of
+#' the grid packages by creating a clean standardised table, output as an image
 #'
 #' @param object dataframe
 #' @param alias character vector indicating what the columns should be renamed, must be a named vector or

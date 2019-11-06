@@ -2,7 +2,7 @@
 % Please edit documentation in R/sentiment_score.R
 \name{sentiment_score}
 \alias{sentiment_score}
-\title{Function to return a sentiment score for each response}
+\title{sentiment_score}
 \usage{
 sentiment_score(data, column, output = "", display = "simple")
 }
@@ -20,5 +20,5 @@ the sentiment of every response should be ranked with a higher rank denoting mor
 Original dataframe with an additional column denoting the sentiment of the response
 }
 \description{
-Function to return a sentiment score for each response
+Return a sentiment score for each response, in a variety of different ways
 }

@@ -22,6 +22,10 @@ summarise_topics(dataframe, column, num_words = 3, exclude = "",
 a dataframe, where each column is a topic and contains the most common words in those topics
 }
 \description{
-Function to return to top unique words for each topic, running
-determine_topics if there is no model for that column yet
+Function to return to top unique words for each topic by fitting
+an LDA model
 }
+\seealso{
+Other topics: \code{\link{classify_topics}}
+}
+\concept{topics}

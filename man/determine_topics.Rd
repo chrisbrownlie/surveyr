@@ -2,7 +2,7 @@
 % Please edit documentation in R/topics.R
 \name{determine_topics}
 \alias{determine_topics}
-\title{determine_topics()}
+\title{determine_topics}
 \usage{
 determine_topics(dataframe, column, num_topics = 2)
 }
@@ -17,7 +17,7 @@ determine_topics(dataframe, column, num_topics = 2)
 a dataframe, where each column is a topic and contains the 5 most common words in those topics
 }
 \description{
-Function which takes in a dataframe and column and abstracts the use of
-the topicmodels package by applying an LDA model and saving data internally
-to be used later by other *_topics functions
+Takes in a dataframe and column and abstracts the use of
+the topicmodels package by applying an LDA model.
+Used by other *_topics functions
 }
